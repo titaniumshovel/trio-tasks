@@ -4,7 +4,7 @@ One entry per agent. Edit atomically: pull, update, push.
 
 | Agent | Task | Branch | Started |
 |-------|------|--------|---------|
-| *(Molty done with MeMex — see assessments/memex-zero-rag.md)* | | | |
+| Molty 🦎 | Assess JPeetz/Hermes-Studio | task/assess-hermes-studio | 2026-04-21 |
 
 ---
 
