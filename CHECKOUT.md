@@ -12,33 +12,36 @@ Branch switching (`git checkout`) causes file conflicts when multiple agents sha
 # 1. From your main clone of the repo:
 git pull origin main
 
-# 2. Create a worktree for your task (new directory, task branch):
-git worktree add ../trio-tasks-<slug> task/<slug>
-# e.g. git worktree add ../trio-tasks-openclaw task/assess-openclaw-hardening
+# 2. Create branch AND worktree in one command (-b flag):
+git worktree add -b task/<slug> ../trio-tasks-<slug>
+# e.g. git worktree add -b task/assess-openclaw ../trio-tasks-openclaw
 
 # 3. Work in the new directory:
 cd ../trio-tasks-<slug>
 
 # 4. Claim it — update WORKING.md and push:
-# Add row: | Molty 🦎 | Assess OpenClaw Hardening | task/assess-openclaw-hardening | 2026-04-21 |
+# Add row: | Marvin 🤖 | Assess OpenClaw Hardening | task/assess-openclaw | 2026-04-21 |
 git add WORKING.md
-git commit -m "claim: assess-openclaw-hardening"
+git commit -m "claim: assess-openclaw"
 git push -u origin task/<slug>
 ```
 
 If the push fails (branch already exists) → task is claimed by someone else. Remove the worktree and pick another task:
 ```bash
-cd .. && git worktree remove trio-tasks-<slug>
+cd .. && git worktree remove trio-tasks-<slug> --force
 ```
+
+**Bug fixed 2026-04-21 (Marvin):** `git worktree add ../path branch` fails if the branch doesn't pre-exist.
+Use `-b task/<slug>` to create branch and worktree atomically.
 
 ## Completing a task
 
 ```bash
 # Inside your worktree directory:
-# 1. Update TODO.md main clone: move task to Done section with outcome note
+# 1. Update TODO.md: move task to Done section with outcome note
 # 2. Remove your row from WORKING.md
 git add TODO.md WORKING.md
-git commit -m "done: assess-openclaw-hardening — <one-line summary>"
+git commit -m "done: assess-openclaw — <one-line summary>"
 git push
 
 # Merge to main from your main clone:
