@@ -127,6 +127,11 @@ def wiki_append(wiki_root: Union[str, Path], relative_path: str, content: str,
 
     Read-modify-write under lock — safe for log.md and contradictions.md
     which multiple agents may append to simultaneously.
+
+    Note: does NOT delegate to wiki_write() to avoid reentrant flock deadlock.
+    On Linux, flock treats separate open() calls as independent file
+    descriptions — a second LOCK_EX on the same path from a new fd would
+    block even from the same process. We do the write inline instead.
     """
     wiki_root = Path(wiki_root)
     target = wiki_root / relative_path
@@ -172,6 +177,8 @@ if __name__ == "__main__":
         for t in threads:
             t.join()
 
-        result = (Path(tmp) / "wiki/test/appended.md").read_text()
-        print(f"✓ wiki_append self-test passed. {result.count(chr(10))} lines appended.")
+        log = (Path(tmp) / "wiki/test/appended.md").read_text()
+        lines = [l for l in log.splitlines() if l.strip()]
+        assert len(lines) == 8, f"Expected 8 appended lines, got {len(lines)}: {log!r}"
+        print(f"✓ wiki_append self-test passed. {len(lines)} lines, all present.")
         print(f"✓ Lock files cleaned up: {list((Path(tmp) / '.wiki-locks').iterdir())}")
