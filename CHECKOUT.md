@@ -2,39 +2,53 @@
 
 How Molty, Coconut, and Joerg/Marvin coordinate tasks without duplicating work.
 
-## The pattern
+## Why worktrees, not branch checkouts
 
-Each task gets a git branch. Claiming a branch = claiming the task. Git's distributed nature makes this atomic — if two agents try to push the same branch, one gets a conflict and backs off.
+Branch switching (`git checkout`) causes file conflicts when multiple agents share a working directory or operate concurrently. Git worktrees give each task its **own directory** — no checkout needed, no conflicts. The main clone stays on `main` and is never disturbed.
 
 ## Claiming a task
 
 ```bash
+# 1. From your main clone of the repo:
 git pull origin main
-git checkout -b task/<slug>     # e.g. task/assess-memex-zero-rag
-# Add your row to WORKING.md:
-# | Molty | Assess MeMex-Zero-RAG | task/assess-memex-zero-rag | 2026-04-21 |
+
+# 2. Create a worktree for your task (new directory, task branch):
+git worktree add ../trio-tasks-<slug> task/<slug>
+# e.g. git worktree add ../trio-tasks-openclaw task/assess-openclaw-hardening
+
+# 3. Work in the new directory:
+cd ../trio-tasks-<slug>
+
+# 4. Claim it — update WORKING.md and push:
+# Add row: | Molty 🦎 | Assess OpenClaw Hardening | task/assess-openclaw-hardening | 2026-04-21 |
 git add WORKING.md
-git commit -m "claim: assess-memex-zero-rag"
+git commit -m "claim: assess-openclaw-hardening"
 git push -u origin task/<slug>
 ```
 
-If the push fails because the branch already exists → someone else claimed it. Pick a different task.
+If the push fails (branch already exists) → task is claimed by someone else. Remove the worktree and pick another task:
+```bash
+cd .. && git worktree remove trio-tasks-<slug>
+```
 
 ## Completing a task
 
 ```bash
-# On your task branch:
-# 1. Update TODO.md: move the task row to the Done section with completion date
+# Inside your worktree directory:
+# 1. Update TODO.md main clone: move task to Done section with outcome note
 # 2. Remove your row from WORKING.md
 git add TODO.md WORKING.md
-git commit -m "done: assess-memex-zero-rag — <one-line summary>"
+git commit -m "done: assess-openclaw-hardening — <one-line summary>"
 git push
 
-# Then merge to main (no PR needed for solo tasks):
-git checkout main
-git pull
+# Merge to main from your main clone:
+cd ../trio-tasks          # back to main clone
+git pull origin main
 git merge task/<slug>
 git push origin main
+
+# Clean up:
+git worktree remove ../trio-tasks-<slug>
 git branch -d task/<slug>
 git push origin --delete task/<slug>
 ```
@@ -42,14 +56,15 @@ git push origin --delete task/<slug>
 ## Checking what's in flight
 
 ```bash
-git branch -r | grep task/      # all claimed branches
-cat WORKING.md                  # who's working on what
+git worktree list                # all active worktrees (your local view)
+git branch -r | grep task/       # all claimed branches (global view)
+cat WORKING.md                   # human-readable who's doing what
 ```
 
 ## Rules
 
-1. One task per branch. Don't stack work on a single branch.
-2. Pull main before claiming. Stale branches cause ghost assignments.
-3. Update `WORKING.md` in the claim commit. The branch is the lock; the file is human-readable.
-4. If you abandon a task, delete the branch and remove your WORKING.md row.
-5. Done tasks go in the Done section of TODO.md with a one-line outcome note.
+1. One worktree per task. Never stack multiple tasks in one worktree.
+2. Pull main before claiming. Stale base causes unnecessary merge conflicts.
+3. WORKING.md update goes in the claim commit — that's the visible signal.
+4. If you abandon a task: delete the worktree, remove your WORKING.md row, delete the remote branch.
+5. Done tasks go in the Done section of TODO.md with a one-line outcome note before cleanup.
