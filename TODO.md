@@ -16,7 +16,7 @@ See [CHECKOUT.md](CHECKOUT.md) for the full protocol.
 
 | # | Task | Priority | Notes |
 |---|------|----------|-------|
-| 1 | Clone + assess `JPeetz/MeMex-Zero-RAG` | High | ~80% overlap with our wiki design — fork candidate |
+| ~~1~~ | ~~Clone + assess `JPeetz/MeMex-Zero-RAG`~~ | ~~High~~ | Done 2026-04-21 — see assessments/memex-zero-rag.md |
 | 2 | Clone + assess `JPeetz/OpenClaw_Security_Hardening` | High | Top priority per Joel — config templates, threat model, security checklist |
 | 3 | Clone + assess `JPeetz/Hermes-Studio` | Medium | Web UI for Hermes — evaluate against our admin interface needs |
 | 4 | Encode Pattern 1 into DSA skill: install timestamp vs symptom onset | Medium | Joerg owns — when install predates symptoms >60 days, flag "what changed?" |
