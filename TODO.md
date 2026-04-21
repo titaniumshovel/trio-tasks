@@ -18,7 +18,7 @@ See [CHECKOUT.md](CHECKOUT.md) for the full protocol.
 |---|------|----------|-------|
 | ~~1~~ | ~~Clone + assess `JPeetz/MeMex-Zero-RAG`~~ | ~~High~~ | Done 2026-04-21 — see assessments/memex-zero-rag.md |
 | 2 | Clone + assess `JPeetz/OpenClaw_Security_Hardening` | High | Top priority per Joel — config templates, threat model, security checklist |
-| 3 | Clone + assess `JPeetz/Hermes-Studio` | Medium | Web UI for Hermes — evaluate against our admin interface needs |
+| ~~3~~ | ~~Clone + assess `JPeetz/Hermes-Studio`~~ | ~~Medium~~ | Done 2026-04-21 — see assessments/hermes-studio.md |
 | 4 | Encode Pattern 1 into DSA skill: install timestamp vs symptom onset | Medium | Joerg owns — when install predates symptoms >60 days, flag "what changed?" |
 | 5 | Encode Pattern 2 into DSA skill: cross-site severity divergence rule | Medium | Joerg owns — when same root cause has >10x site divergence, reorder by magnitude |
 | 6 | Write `browser-capability-v1.md` spec | Low | Sibling to supply-chain-v1.md, still unbuilt |
